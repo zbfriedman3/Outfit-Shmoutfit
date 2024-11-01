@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outfit Shmoutfit</title>
+    <style>
+        @font-face {
+            font-family: "Groupaaa";
+            src: url("/Users/zach/Library/Fonts/group.8a753a8.otf");
+        }
+
+        body {
+            background-color: lightyellow;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: -1vw;
+            position: relative; /* Allow absolute positioning of notes */
+        }
+
+        h1 {
+            font-size: 15vh;
+            text-align: center;
+            font-family: Groupaaa;
+            margin: 0;
+            margin-bottom: 2vh;
+            color: rgb(66, 56, 255);
+            height: 15vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .rectangle {
+            width: 400px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.3s; /* Smooth transition for rotation */
+        }
+
+        .rectangle.top {
+            height: 30vh;
+        }
+
+        .rectangle.middle {
+            height: 40vh;
+        }
+
+        .rectangle.bottom {
+            height: 15vh;
+        }
+
+        .note {
+            position: absolute;
+            width: 7vw;
+            height: 7vw;
+            background-color: #ffeb3b; /* Yellow color for post-it note */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            color: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer; /* Change cursor to pointer */
+        }
+    </style>
+</head>
+<body>
+    <h1>oUTFIt SHmOuTFiT</h1>
+    <div class="container">
+        <div class="rectangle top"></div>
+        <div class="rectangle middle"></div>
+        <div class="rectangle bottom"></div>
+    </div>
+
+    <script>
+        // Arrays holding file names with folder paths
+        const shirtImages = ["shirts/shirts1.png", "shirts/shirts2.png"];
+        const pantImages = ["pants/pants1.png", "pants/pants2.png"];
+        const shoeImages = ["shoes/shoes1.png", "shoes/shoes2.png"];
+
+        // Function to get a random image from a given array
+        function getRandomImage(images) {
+            const index = Math.floor(Math.random() * images.length);
+            return images[index];
+        }
+
+        // Function to get a random rotation between -15 and 15 degrees
+        function getRandomRotation() {
+            return Math.floor(Math.random() * 21) - 10; // Range: -15 to 15
+        }
+
+        // Function to set random images and rotation to each rectangle
+        function setRandomImages() {
+            const topRect = document.querySelector('.rectangle.top');
+            const middleRect = document.querySelector('.rectangle.middle');
+            const bottomRect = document.querySelector('.rectangle.bottom');
+
+            topRect.style.backgroundImage = `url(${getRandomImage(shirtImages)})`;
+            topRect.style.transform = `rotate(${getRandomRotation()}deg)`;
+
+            middleRect.style.backgroundImage = `url(${getRandomImage(pantImages)})`;
+            middleRect.style.transform = `rotate(${getRandomRotation()}deg)`;
+
+            bottomRect.style.backgroundImage = `url(${getRandomImage(shoeImages)})`;
+            bottomRect.style.transform = `rotate(${getRandomRotation()}deg)`;
+        }
+
+        // Function to create a random post-it note
+        function createNote(noteContents) {
+            const note = document.createElement('div');
+            note.className = 'note';
+            note.textContent = noteContents;
+            document.body.appendChild(note);
+
+            // Set random position within the viewport
+            const randomX = Math.random() * (window.innerWidth - 120); // Subtract note width
+            const randomY = Math.random() * (window.innerHeight - 120); // Subtract note height
+            note.style.left = `${randomX}px`;
+            note.style.top = `${randomY}px`;
+
+            // Add event listener for picking up and placing the note
+            let isDragging = false;
+
+            note.addEventListener('click', function(event) {
+                // Prevent the event from bubbling up to the body click handler
+                event.stopPropagation();
+
+                if (isDragging) {
+                    isDragging = false; // Stop dragging
+                } else {
+                    isDragging = true; // Start dragging
+                }
+            });
+
+            document.addEventListener('mousemove', function(event) {
+                if (isDragging) {
+                    // Move the note with the mouse
+                    note.style.left = `${event.clientX - note.offsetWidth / 2}px`;
+                    note.style.top = `${event.clientY - note.offsetHeight / 2}px`;
+                }
+            });
+        }
+
+        // Initial call to set images and create a note on page load
+        setRandomImages();
+        createNote("Dual colored (ex: black and white) can be fun!");
+        createNote("pull your pants up a bit...");
+
+        // Click handler for the entire body
+        document.body.addEventListener('click', function(event) {
+            if (event.target.classList.contains('rectangle')) {
+                // Handle individual rectangle click with rotation
+                if (event.target.classList.contains('top')) {
+                    event.target.style.backgroundImage = `url(${getRandomImage(shirtImages)})`;
+                    event.target.style.transform = `rotate(${getRandomRotation()}deg)`;
+                } else if (event.target.classList.contains('middle')) {
+                    event.target.style.backgroundImage = `url(${getRandomImage(pantImages)})`;
+                    event.target.style.transform = `rotate(${getRandomRotation()}deg)`;
+                } else if (event.target.classList.contains('bottom')) {
+                    event.target.style.backgroundImage = `url(${getRandomImage(shoeImages)})`;
+                    event.target.style.transform = `rotate(${getRandomRotation()}deg)`;
+                }
+            } else {
+                // If clicking outside any rectangle, change all images
+                setRandomImages();
+            }
+        });
+    </script>
+</body>
+</html>
